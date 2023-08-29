@@ -1,0 +1,42 @@
+# https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request
+name: Enable auto-merge on trivial Dependabot pull requests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/**'
+      - 'templates/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+
+  dependabot:
+
+    runs-on: ubuntu-latest
+
+    if: ${{ github.actor == 'dependabot[bot]' }}
+
+    name: Enable auto-merge on trivial Dependabot pull requests
+
+    steps:
+
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@cd6e996708b8cfe0b639401134a3b9a3177be7b2 # v1.5.1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+
+      - if: ${{ contains(steps.metadata.outputs.dependency-names, 'actions/checkout') }}
+        name: Enable auto-merge on Dependabot PR if it's targeting actions/checkout
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        run: gh pr merge --auto --merge "$PR_URL"
+        # Enables auto-merge on PR with the merge commit merge method.
+        # This causes the PR to be merged when all the checks and approvals have passed.
