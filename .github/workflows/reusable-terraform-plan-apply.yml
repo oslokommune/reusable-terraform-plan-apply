@@ -152,16 +152,17 @@ jobs:
           ref: ${{ inputs.git_ref }}
 
 
-      - name: Add output parameter for the checked out commit SHA
-        id: output-checkout-sha
+      - name: Add output parameter for the checked out commit SHA and workdir short SHA
+        id: output-hashes
         run: |
           echo "CHECKOUT_SHA=$(git log -1 '--format=format:%H')" >> "$GITHUB_OUTPUT"
+          echo "WORKDIR_SHORT_SHA=$(echo -n ${{ inputs.working_directory }} | sha1sum | cut -c 1-7)" >> "$GITHUB_OUTPUT"
 
 
       - name: Add output parameter for the Terraform execution plan filename
         id: output-plan-filename
         run: |
-          echo "PLAN_FILENAME=plan-${{ github.run_id }}_${{ steps.output-checkout-sha.outputs.CHECKOUT_SHA }}.tfplan" >> "$GITHUB_OUTPUT"
+          echo "PLAN_FILENAME=plan-${{ github.run_id }}_${{ steps.output-hashes.outputs.CHECKOUT_SHA }}_${{ steps.output-hashes.outputs.WORKDIR_SHORT_SHA }}.tfplan" >> "$GITHUB_OUTPUT"
 
 
       - name: Setup Terraform
