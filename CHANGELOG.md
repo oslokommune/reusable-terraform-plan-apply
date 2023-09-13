@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.0.1...v1.0.2) (2023-09-13)
+
+
+### Bug Fixes
+
+* Use a more unique plan filename to avoid collisions ([#14](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/14)) ([0551a58](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/0551a5839b6adcbfe877c5699d1cceeb2fc739b1))
+
 ## [1.0.1](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.0.0...v1.0.1) (2023-09-05)
 
 
