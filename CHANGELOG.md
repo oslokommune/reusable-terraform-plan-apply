@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.0.2...v1.0.3) (2023-09-19)
+
+
+### Dependency Updates
+
+* Bump aws-actions/configure-aws-credentials in /.github/workflows ([#13](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/13)) ([9db0dd3](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/9db0dd3e4f748c94621dc2003a7d658afc883980))
+
 ## [1.0.2](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.0.1...v1.0.2) (2023-09-13)
 
 
