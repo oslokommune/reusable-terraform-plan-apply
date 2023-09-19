@@ -7,6 +7,13 @@ updates:
       interval: "daily"
     commit-message:
       prefix: deps
+    groups:
+      non-breaking-gha:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "github-actions"
     directory: "/templates"
@@ -14,3 +21,10 @@ updates:
       interval: "daily"
     commit-message:
       prefix: deps
+    groups:
+      non-breaking-gha-templates:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
