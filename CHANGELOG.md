@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.0.4...v1.1.0) (2023-09-22)
+
+
+### Features
+
+* Use a more unique concurrency group name ([#19](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/19)) ([0c6b1e5](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/0c6b1e5e8c72bcf7a3121cbe90eefe59fe0d5cef))
+
 ## [1.0.4](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.0.3...v1.0.4) (2023-09-21)
 
 
