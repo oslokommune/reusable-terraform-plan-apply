@@ -128,7 +128,8 @@ jobs:
       TF_IN_AUTOMATION: true
 
     outputs:
-      plan_filename: ${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+      plan_filename: ${{ steps.plan.outputs.PLAN_FILENAME }}
+      exitcode: ${{ steps.plan.outputs.exitcode }}
 
     steps:
 
@@ -215,31 +216,31 @@ jobs:
       # This is the only real way to guarantee what is approved is what is applied
       # Background: https://developer.hashicorp.com/terraform/tutorials/automation/automate-terraform#plan-and-apply-on-different-machines
       # More: https://stackoverflow.com/questions/70922743/inconsistent-dependency-when-i-do-terraform-apply-from-plan-out-file
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Archive the initialized Terraform working directory as a TAR file
         run: |
           tar -cvf working_directory.tar ./
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Disable unnecessary apt features to optimize installation performance
         uses: oslokommune/composite-actions/optimize-apt-get@optimize-apt-get-v1
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Install the age encryption tool
         run: |
           sudo apt-get update # https://docs.github.com/en/actions/using-github-hosted-runners/customizing-github-hosted-runners#installing-software-on-ubuntu-runners
           sudo apt-get install age
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Encrypt the TAR file with age
         run: |
           age --recipient '${{ secrets.AGE_PUBLIC_KEY }}' working_directory.tar > working_directory.tar.age
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Store the TAR file as a workflow artifact
         uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
@@ -254,7 +255,7 @@ jobs:
       - terraform-version
       - terraform-plan
 
-    if: ${{ inputs.apply }}
+    if: ${{ inputs.apply && needs.terraform-plan.outputs.exitcode == 2 }}
 
     environment: "${{ inputs.environment }}"
 
