@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.1...v1.1.2) (2024-01-02)
+
+
+### Dependency Updates
+
+* Bump actions/download-artifact in /.github/workflows ([#35](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/35)) ([596b044](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/596b044d65f2a65485848f45fafac7b58a77bbad))
+* Bump actions/upload-artifact in /.github/workflows ([#33](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/33)) ([778c3fb](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/778c3fbfe244b465def76ffd3f1f1fdfd379f5a7))
+
 ## [1.1.1](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.0...v1.1.1) (2024-01-02)
 
 
