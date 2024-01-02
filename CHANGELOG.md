@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.1](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.0...v1.1.1) (2024-01-02)
+
+
+### Dependency Updates
+
+* Bump actions/checkout from 4.0.0 to 4.1.0 in /.github/workflows ([b741055](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/b741055549eee940f99b3977826bd0ed91815cdf))
+* Bump actions/checkout from 4.1.0 to 4.1.1 in /.github/workflows ([f488c2c](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/f488c2ca5c8da5224363a9b45450975847710e2e))
+* Bump the non-breaking-gha group ([abea726](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/abea72648e8dc3787fd99bb6bf831e33146c6536))
+
 ## [1.1.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.0.4...v1.1.0) (2023-09-22)
 
 
