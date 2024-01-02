@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.2...v1.1.3) (2024-01-02)
+
+
+### Dependency Updates
+
+* Bump hashicorp/setup-terraform in /.github/workflows ([#29](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/29)) ([318c114](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/318c114561e7eb3bdd6052a40af110386d2dd528))
+
 ## [1.1.2](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.1...v1.1.2) (2024-01-02)
 
 
