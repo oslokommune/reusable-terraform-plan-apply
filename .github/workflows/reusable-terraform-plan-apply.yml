@@ -128,7 +128,7 @@ jobs:
       TF_IN_AUTOMATION: true
 
     outputs:
-      plan_filename: ${{ steps.plan.outputs.PLAN_FILENAME }}
+      plan_filename: ${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
       exitcode: ${{ steps.plan.outputs.exitcode }}
 
     steps:
