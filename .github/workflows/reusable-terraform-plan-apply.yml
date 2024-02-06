@@ -184,7 +184,7 @@ jobs:
 
       - if: ${{ inputs.load_ssh_key }}
         name: Load golden-path-iac SSH deploy key
-        uses: webfactory/ssh-agent@d4b9b8ff72958532804b70bbe600ad43b36d5f2e # v0.8.0
+        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
         with:
           ssh-private-key: ${{ secrets.GOLDEN_PATH_IAC_PRIVATE_DEPLOY_KEY }}
 
@@ -241,7 +241,7 @@ jobs:
 
       - if: ${{ inputs.apply }}
         name: Store the TAR file as a workflow artifact
-        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
         with:
           name: encrypted_working_directory_for_${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
           path: ${{ inputs.working_directory }}/working_directory.tar.age
@@ -281,7 +281,7 @@ jobs:
       # to ensure that the archived configuration is extracted at an identical
       # absolute path.
       - name: Download the TAR file artifact
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        uses: actions/download-artifact@eaceaf801fd36c7dee90939fad912460b18a1ffe # v4.1.2
         with:
           name: encrypted_working_directory_for_${{ needs.terraform-plan.outputs.plan_filename }}
 
