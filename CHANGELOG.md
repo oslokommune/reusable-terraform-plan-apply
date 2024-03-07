@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.4](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.3...v1.1.4) (2024-03-07)
+
+
+### Dependency Updates
+
+* Bump the non-breaking-gha group ([#42](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/42)) ([8b5f18c](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/8b5f18c9912d1328f4da9c433085ba25781f5735))
+* Bump the non-breaking-gha group ([#55](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/55)) ([e11496c](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/e11496c0ddbcf4cdc8424c76fe592e825fecc9cd))
+
 ## [1.1.3](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.2...v1.1.3) (2024-01-02)
 
 
