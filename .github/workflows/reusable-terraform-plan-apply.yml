@@ -98,7 +98,7 @@ jobs:
 
       - name: Determine the minimum and maximum Terraform versions
         id: v
-        uses: clowdhaus/terraform-min-max@4a93c5af0208f3c76a5d88fa71a065c0852cf304 # v1.2.7
+        uses: clowdhaus/terraform-min-max@5c9cf3d385a6556a7f6487478e9f99204bcee7cc # v1.3.0
         with:
           directory: ${{ inputs.working_directory }}
 
