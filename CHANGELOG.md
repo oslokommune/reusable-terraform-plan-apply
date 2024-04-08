@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.6](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.5...v1.1.6) (2024-04-08)
+
+
+### Dependency Updates
+
+* Bump clowdhaus/terraform-min-max ([#65](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/65)) ([9cd4c22](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/9cd4c22b73f5befa33515b843f19167367985ba9))
+* Bump the non-breaking-gha group ([7591433](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/7591433a46b1c91ab0cdd645c12cacadfdcca4a8))
+* Bump the non-breaking-gha group ([886358f](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/886358fe4697fb24cb38aa978088897f7e5226f3))
+
 ## [1.1.5](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.4...v1.1.5) (2024-03-13)
 
 
