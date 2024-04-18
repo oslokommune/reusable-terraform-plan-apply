@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.7](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.6...v1.1.7) (2024-04-18)
+
+
+### Dependency Updates
+
+* Bump dependabot/fetch-metadata in /.github/workflows ([#64](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/64)) ([15d1309](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/15d1309c1630972c33a6220c6abdf54081246fd5))
+
 ## [1.1.6](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.5...v1.1.6) (2024-04-08)
 
 
