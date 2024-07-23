@@ -6,6 +6,15 @@ permissions:
 on:
 
   workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      GOLDEN_PATH_IAC_PRIVATE_DEPLOY_KEY:
+        required: true
+      AGE_PUBLIC_KEY:
+        required: true
+      AGE_SECRET_KEY:
+        required: true
     inputs:
       environment:
         description: >
