@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.7...v2.0.0) (2024-07-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add secrets input to workflow call ([#79](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/79))
+
+### Features
+
+* Add secrets input to workflow call ([#79](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/79)) ([d130e12](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/d130e12b65e2444d765621a12ec8cf8bd2b72bc9))
+
+
+### Dependency Updates
+
+* Bump actions/checkout ([922646e](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/922646e12e1a69209acb8325f1546f0c0432b2af))
+
 ## [1.1.7](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.6...v1.1.7) (2024-04-18)
 
 
