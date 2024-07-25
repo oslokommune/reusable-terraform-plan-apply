@@ -193,6 +193,13 @@ jobs:
         name: Create Terraform plan summary file
         run: |
           cat << EOF > plan.md
+          | Attribute | Value |
+          | --------- | ----- |
+          | Pusher | @${{ github.actor }} |
+          | Action | \`${{ github.event_name }}\` |
+          | Working directory | \`${{ inputs.working_directory }}\` |
+          | Workflow | \`${{ github.workflow }}\` |
+
           ## Terraform plan
 
           <details><summary>Show plan</summary>
@@ -202,13 +209,6 @@ jobs:
           \`\`\`
 
           </details>
-
-          | Attribute | Value |
-          | --------- | ----- |
-          | Pusher | @${{ github.actor }} |
-          | Action | \`${{ github.event_name }}\` |
-          | Working Directory | \`${{ inputs.working_directory }}\` |
-          | Workflow | \`${{ github.workflow }}\` |
           EOF
 
 
