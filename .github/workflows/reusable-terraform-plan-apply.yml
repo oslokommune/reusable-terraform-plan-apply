@@ -85,39 +85,9 @@ concurrency:
 
 jobs:
 
-  terraform-version:
-
-    name: Determine and output Terraform version
-
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    outputs:
-      max: ${{ steps.v.outputs.maxVersion }}
-
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
-        with:
-          ref: ${{ inputs.git_ref }}
-
-
-      - name: Determine the minimum and maximum Terraform versions
-        id: v
-        uses: clowdhaus/terraform-min-max@9a19164e967d57d2b8f1e5b0854f39bc73265d8b # v1.3.1
-        with:
-          directory: ${{ inputs.working_directory }}
-
-
   terraform-plan:
 
     name: Create a Terraform execution plan
-
-    needs:
-      - terraform-version
 
     runs-on: ubuntu-latest
 
@@ -174,10 +144,15 @@ jobs:
           echo "PLAN_FILENAME=plan-${{ github.run_id }}_${{ steps.output-hashes.outputs.CHECKOUT_SHA }}_${{ steps.output-hashes.outputs.WORKDIR_SHORT_SHA }}.tfplan" >> "$GITHUB_OUTPUT"
 
 
+      - name: Extract Terraform version
+        id: v
+        run: echo "TERRAFORM_VERSION=$(grep required_version *.tf | sed -E 's/[^"]+"([^"]+)"+/\1/')" >> "$GITHUB_OUTPUT"
+
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
         with:
-          terraform_version: "${{ needs.terraform-version.outputs.max }}"
+          terraform_version: ${{ steps.v.outputs.TERRAFORM_VERSION }}
 
 
       - name: Create Terraform provider plugins cache directory
