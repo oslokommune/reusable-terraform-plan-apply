@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.1.0...v2.2.0) (2024-07-25)
+
+
+### Features
+
+* Only run apply job when diff is non-empty (changes present) ([#83](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/83)) ([7425e1f](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/7425e1ffa2c050f5247f6933427f0be4a1bd2707))
+
 ## [2.1.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.0.0...v2.1.0) (2024-07-25)
 
 
