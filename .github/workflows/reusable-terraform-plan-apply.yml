@@ -109,6 +109,7 @@ jobs:
     outputs:
       plan_filename: ${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
       terraform_version: ${{ steps.v.outputs.TERRAFORM_VERSION }}
+      exitcode: ${{ steps.plan.outputs.exitcode }}
 
     steps:
 
@@ -206,25 +207,25 @@ jobs:
           tar -cvf working_directory.tar ./
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Disable unnecessary apt features to optimize installation performance
         uses: oslokommune/composite-actions/optimize-apt-get@optimize-apt-get-v1
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Install the age encryption tool
         run: |
           sudo apt-get update # https://docs.github.com/en/actions/using-github-hosted-runners/customizing-github-hosted-runners#installing-software-on-ubuntu-runners
           sudo apt-get install age
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Encrypt the TAR file with age
         run: |
           age --recipient '${{ secrets.AGE_PUBLIC_KEY }}' working_directory.tar > working_directory.tar.age
 
 
-      - if: ${{ inputs.apply }}
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Store the TAR file as a workflow artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
@@ -238,7 +239,7 @@ jobs:
     needs:
       - terraform-plan
 
-    if: ${{ inputs.apply }}
+    if: ${{ inputs.apply && needs.terraform-plan.outputs.exitcode == 2 }}
 
     environment: "${{ inputs.environment }}"
 
