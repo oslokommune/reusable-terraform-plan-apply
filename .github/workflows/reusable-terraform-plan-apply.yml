@@ -228,7 +228,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
-          body-path: plan.md
+          body-path: ${{ inputs.working_directory }}/plan.md
           edit-mode: replace
 
 
