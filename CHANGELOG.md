@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.0.0...v2.1.0) (2024-07-25)
+
+
+### Features
+
+* Replace job to extract Terraform version with shell command step ([#81](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/81)) ([cf27706](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/cf277065dfa3ff25a2e2cebe8e07b6c4e4836f5f))
+
 ## [2.0.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v1.1.7...v2.0.0) (2024-07-23)
 
 
