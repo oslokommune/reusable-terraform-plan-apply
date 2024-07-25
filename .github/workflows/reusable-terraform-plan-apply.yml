@@ -100,6 +100,7 @@ jobs:
       id-token: write # For the GitHub's OIDC Token endpoint
       contents: read
       actions: read
+      pull-requests: write
 
     environment: "${{ inputs.environment }}"
 
@@ -186,6 +187,44 @@ jobs:
         id: plan
         run: |
           terraform plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+
+
+      - if: github.event_name == 'pull_request'
+        name: Create Terraform plan summary file
+        run: |
+          cat << EOF > plan.md
+          ## Terraform execution
+
+          Running Terraform in \`${{ inputs.working_directory }}\`.
+
+          <details><summary>Show plan</summary>
+
+          \`\`\`terraform
+          ${{ steps.plan.outputs.stdout }}
+          \`\`\`
+
+          </details>
+          EOF
+
+
+      - if: github.event_name == 'pull_request'
+        name: Find Terraform plan comment
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<details><summary>Show plan</summary>'
+
+
+      - if: github.event_name == 'pull_request'
+        name: Create or update Terraform plan comment
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          body-path: ${{ inputs.working_directory }}/plan.md
+          edit-mode: replace
 
 
       - name: Write plan summary
