@@ -100,6 +100,7 @@ jobs:
       id-token: write # For the GitHub's OIDC Token endpoint
       contents: read
       actions: read
+      pull-requests: write
 
     environment: "${{ inputs.environment }}"
 
