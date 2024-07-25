@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.2.0...v2.3.0) (2024-07-25)
+
+
+### Features
+
+* Add Terraform plan output as PR comment ([#85](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/85)) ([f145375](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/f14537555d52750f4e5292bfd14638080ce450d7))
+
 ## [2.2.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.1.0...v2.2.0) (2024-07-25)
 
 
