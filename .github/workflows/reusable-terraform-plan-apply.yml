@@ -266,7 +266,7 @@ jobs:
 
       - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Store the TAR file as a workflow artifact
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029 # v4.3.5
         with:
           name: encrypted_working_directory_for_${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
           path: ${{ inputs.working_directory }}/working_directory.tar.age
