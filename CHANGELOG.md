@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.3](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.2...v2.3.3) (2024-12-18)
+
+
+### Dependency Updates
+
+* Bump the non-breaking-gha group across 1 directory with 3 updates ([#101](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/101)) ([68f4b81](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/68f4b81e40aa6215ceb38e9cc0d20c33492abbe3))
+
 ## [2.3.2](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.1...v2.3.2) (2024-10-10)
 
 
