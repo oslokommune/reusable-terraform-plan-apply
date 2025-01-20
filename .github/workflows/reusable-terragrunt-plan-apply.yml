@@ -184,9 +184,7 @@ jobs:
           tf_version: "1.10.4"
           tg_version: "0.72.0"
           tg_dir: "stacks/dev/app-too-tikki"
-          tg_command: 'plan'
-        run: |
-          terragrunt init -input=false -lockfile=readonly
+          tg_command: 'init -input=false -lockfile=readonly'
 
 
       - name: Create a Terraform execution plan (don't cancel this step)
@@ -196,9 +194,7 @@ jobs:
           tf_version: "1.10.4"
           tg_version: "0.72.0"
           tg_dir: "stacks/dev/app-too-tikki"
-          tg_command: 'plan'
-        run: |
-          terragrunt plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+          tg_command: "terragrunt plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}"
 
 
       - if: github.event_name == 'pull_request'
