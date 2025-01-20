@@ -179,12 +179,24 @@ jobs:
       # If this step fails, make sure you have updated and commited a lock file covering all platforms:
       # terraform providers lock -platform=darwin_amd64 -platform=darwin_arm64 -platform=linux_amd64
       - name: Initialize the working directory containing Terraform configuration files
+        uses: gruntwork-io/terragrunt-action@v2
+        with:
+          tf_version: "1.10.4"
+          tg_version: "0.72.0"
+          tg_dir: "stacks/dev/app-too-tikki"
+          tg_command: 'plan'
         run: |
           terragrunt init -input=false -lockfile=readonly
 
 
       - name: Create a Terraform execution plan (don't cancel this step)
         id: plan
+        uses: gruntwork-io/terragrunt-action@v2
+        with:
+          tf_version: "1.10.4"
+          tg_version: "0.72.0"
+          tg_dir: "stacks/dev/app-too-tikki"
+          tg_command: 'plan'
         run: |
           terragrunt plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
 
@@ -195,7 +207,7 @@ jobs:
           cat << EOF > plan.md
           ## Terraform execution
 
-          Running Terraform in \`${{ inputs.working_directory }}\`.
+          Running Terragrunt in \`${{ inputs.working_directory }}\`.
 
           <details><summary>Show plan</summary>
 
