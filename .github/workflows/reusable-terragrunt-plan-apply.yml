@@ -201,7 +201,7 @@ jobs:
           tf_version: "1.10.4"
           tg_version: "0.72.0"
           tg_dir: "stacks/dev/app-too-tikki"
-          tg_command: "terragrunt plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}"
+          tg_command: "plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}"
 
 
       - if: github.event_name == 'pull_request'
