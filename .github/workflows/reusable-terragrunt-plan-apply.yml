@@ -1,0 +1,375 @@
+name: Run Terragrunt
+
+permissions:
+  contents: read
+
+on:
+
+  workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      GOLDEN_PATH_IAC_PRIVATE_DEPLOY_KEY:
+        required: true
+      AGE_PUBLIC_KEY:
+        required: true
+      AGE_SECRET_KEY:
+        required: true
+    inputs:
+      environment:
+        description: >
+          The GitHub deployment environment to use.
+        required: false
+        type: string
+
+      git_ref:
+        description: >
+          The branch, tag or SHA to checkout.
+        required: false
+        default: main
+        type: string
+
+      working_directory:
+        description: >
+          The working directory to run Terraform commands in.
+        required: true
+        type: string
+
+      load_ssh_key:
+        description: >
+          Load a SSH key to make it possible to download Terraform modules from the `golden-path-iac` repository.
+        required: false
+        default: false
+        type: boolean
+
+      configure_aws_credentials:
+        description: >
+          Configure AWS credentials.
+        required: false
+        default: true
+        type: boolean
+
+      region:
+        description: >
+          The AWS region to use.
+        required: false
+        default: "eu-west-1"
+        type: string
+
+      role_session_name:
+        description: >
+          The AWS role session name to use.
+        required: false
+        default: golden-path-iac
+        type: string
+
+      apply:
+        description: >
+          Apply the Terraform execution plan.
+        required: false
+        default: false
+        type: boolean
+
+      allow_same_approver:
+        description: >
+          Allow the person who initiated the deployment to approve it.
+        required: false
+        default: true
+        type: boolean
+
+env:
+  TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
+
+concurrency:
+  group: "${{ inputs.environment }}-${{ inputs.working_directory }}"
+
+jobs:
+
+  terraform-plan:
+
+    name: Create a Terragrunt execution plan
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ inputs.working_directory }}
+
+    permissions:
+      id-token: write # For the GitHub's OIDC Token endpoint
+      contents: read
+      actions: read
+      pull-requests: write
+
+    environment: "${{ inputs.environment }}"
+
+    env:
+      TF_IN_AUTOMATION: true
+
+    outputs:
+      plan_filename: ${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+      terraform_version: ${{ steps.v.outputs.TERRAFORM_VERSION }}
+      exitcode: ${{ steps.plan.outputs.exitcode }}
+
+    steps:
+
+      - if: ${{ !inputs.allow_same_approver }}
+        name: Fail if the person who initiated the deployment is the same who approved it.
+        uses: oslokommune/composite-actions/disallow-same-approver@disallow-same-approver-v1
+
+
+      - if: ${{ inputs.configure_aws_credentials }}
+        name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          aws-region: ${{ inputs.region }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: ${{ inputs.role_session_name }}
+
+
+      - name: Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          ref: ${{ inputs.git_ref }}
+
+
+      - name: Add output parameter for the checked out commit SHA and workdir short SHA
+        id: output-hashes
+        run: |
+          echo "CHECKOUT_SHA=$(git log -1 '--format=format:%H')" >> "$GITHUB_OUTPUT"
+          echo "WORKDIR_SHORT_SHA=$(echo -n ${{ inputs.working_directory }} | sha1sum | cut -c 1-7)" >> "$GITHUB_OUTPUT"
+
+
+      - name: Add output parameter for the Terraform execution plan filename
+        id: output-plan-filename
+        run: |
+          echo "PLAN_FILENAME=plan-${{ github.run_id }}_${{ steps.output-hashes.outputs.CHECKOUT_SHA }}_${{ steps.output-hashes.outputs.WORKDIR_SHORT_SHA }}.tfplan" >> "$GITHUB_OUTPUT"
+
+
+      - name: Extract Terraform version
+        id: v
+        run: echo "TERRAFORM_VERSION=$(grep required_version *.tf | sed -E 's/[^"]+"([^"]+)"+/\1/')" >> "$GITHUB_OUTPUT"
+
+
+#      - name: Setup Terraform
+#        uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
+#        with:
+#          terraform_version: ${{ steps.v.outputs.TERRAFORM_VERSION }}
+
+
+      - name: Create Terraform provider plugins cache directory
+        run: mkdir --parents "$TF_PLUGIN_CACHE_DIR"
+
+
+      - name: Cache Terraform provider plugins
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+          key: ${{ format('{0}-terraform-plugins-{1}', runner.os, hashFiles(format('{0}/.terraform.lock.hcl', inputs.working_directory ))) }}
+
+
+      - if: ${{ inputs.load_ssh_key }}
+        name: Load golden-path-iac SSH deploy key
+        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.GOLDEN_PATH_IAC_PRIVATE_DEPLOY_KEY }}
+
+
+      # If this step fails, make sure you have updated and commited a lock file covering all platforms:
+      # terraform providers lock -platform=darwin_amd64 -platform=darwin_arm64 -platform=linux_amd64
+      - name: Initialize the working directory containing Terraform configuration files
+        run: |
+          terragrunt init -input=false -lockfile=readonly
+
+
+      - name: Create a Terraform execution plan (don't cancel this step)
+        id: plan
+        run: |
+          terragrunt plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+
+
+      - if: github.event_name == 'pull_request'
+        name: Create Terraform plan summary file
+        run: |
+          cat << EOF > plan.md
+          ## Terraform execution
+
+          Running Terraform in \`${{ inputs.working_directory }}\`.
+
+          <details><summary>Show plan</summary>
+
+          \`\`\`terraform
+          ${{ steps.plan.outputs.stdout }}
+          \`\`\`
+
+          </details>
+          EOF
+
+
+      - if: github.event_name == 'pull_request'
+        name: Find Terraform plan comment
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<details><summary>Show plan</summary>'
+
+
+      - if: github.event_name == 'pull_request'
+        name: Create or update Terraform plan comment
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          body-path: ${{ inputs.working_directory }}/plan.md
+          edit-mode: replace
+
+
+      - name: Write plan summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          # Plan
+          \`\`\`tfplan
+          ${{ steps.plan.outputs.stdout }}
+          \`\`\`
+          EOF
+
+
+      # This is the only real way to guarantee what is approved is what is applied
+      # Background: https://developer.hashicorp.com/terraform/tutorials/automation/automate-terraform#plan-and-apply-on-different-machines
+      # More: https://stackoverflow.com/questions/70922743/inconsistent-dependency-when-i-do-terraform-apply-from-plan-out-file
+      - if: ${{ inputs.apply }}
+        name: Archive the initialized Terraform working directory as a TAR file
+        run: |
+          tar -cvf working_directory.tar ./
+
+
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
+        name: Disable unnecessary apt features to optimize installation performance
+        uses: oslokommune/composite-actions/optimize-apt-get@optimize-apt-get-v1
+
+
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
+        name: Install the age encryption tool
+        run: |
+          sudo apt-get update # https://docs.github.com/en/actions/using-github-hosted-runners/customizing-github-hosted-runners#installing-software-on-ubuntu-runners
+          sudo apt-get install age
+
+
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
+        name: Encrypt the TAR file with age
+        run: |
+          age --recipient '${{ secrets.AGE_PUBLIC_KEY }}' working_directory.tar > working_directory.tar.age
+
+
+      - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
+        name: Store the TAR file as a workflow artifact
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        with:
+          name: encrypted_working_directory_for_${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+          path: ${{ inputs.working_directory }}/working_directory.tar.age
+          retention-days: 1
+
+
+  terraform-apply:
+
+    needs:
+      - terraform-plan
+
+    if: ${{ inputs.apply && needs.terraform-plan.outputs.exitcode == 2 }}
+
+    environment: "${{ inputs.environment }}"
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write # For the GitHub's OIDC Token endpoint
+      actions: read
+
+    env:
+      TF_IN_AUTOMATION: true
+
+    name: Apply the Terraform execution plan (if enabled)
+
+    steps:
+
+      - if: ${{ !inputs.allow_same_approver }}
+        name: Fail if the person who initiated the deployment is the same who approved it
+        uses: oslokommune/composite-actions/disallow-same-approver@main
+
+
+      # The saved plan file can contain absolute paths to child modules and
+      # other data files referred to by configuration. Therefore it is necessary
+      # to ensure that the archived configuration is extracted at an identical
+      # absolute path.
+      - name: Download the TAR file artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: encrypted_working_directory_for_${{ needs.terraform-plan.outputs.plan_filename }}
+
+
+      - name: Disable unnecessary apt features to optimize installation performance
+        uses: oslokommune/composite-actions/optimize-apt-get@optimize-apt-get-v1
+
+
+      - name: Install the age encryption tool
+        run: |
+          sudo apt-get update # https://docs.github.com/en/actions/using-github-hosted-runners/customizing-github-hosted-runners#installing-software-on-ubuntu-runners
+          sudo apt-get install age
+
+
+      - name: Decrypt the TAR file with age
+        run: |
+          echo '${{ secrets.AGE_SECRET_KEY }}' | age --decrypt --identity - working_directory.tar.age > working_directory.tar
+
+
+      - name: Extract the TAR file
+        run: |
+          mkdir -p "./${{ inputs.working_directory }}"
+          tar -xf working_directory.tar --directory "./${{ inputs.working_directory }}"
+          rm working_directory.tar
+
+
+      - if: ${{ inputs.configure_aws_credentials }}
+        name: Configure AWS credentials using OIDC (if enabled)
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          aws-region: ${{ inputs.region }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: ${{ inputs.role_session_name }}
+
+
+#      - name: Setup Terraform
+#        uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
+#        with:
+#          terraform_version: "${{ needs.terraform-plan.outputs.terraform_version }}"
+
+
+      - name: Create Terraform provider plugins cache directory
+        run: mkdir --parents "$TF_PLUGIN_CACHE_DIR"
+
+
+      - name: Cache Terraform provider plugins
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+        with:
+          path: ${{ env.TF_PLUGIN_CACHE_DIR }}
+          key: ${{ format('{0}-terraform-plugins-{1}', runner.os, hashFiles(format('{0}/.terraform.lock.hcl', inputs.working_directory ))) }}
+
+
+      - name: Apply the Terraform execution plan (don't cancel this step)
+        id: apply
+        working-directory: ${{ github.workspace}}/${{ inputs.working_directory }}
+        run: |
+          terragrunt apply -input=false -auto-approve -no-color "${{ needs.terraform-plan.outputs.plan_filename }}"
+
+
+      - name: Write apply summary
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          # Apply
+          \`\`\`tfplan
+          ${{ steps.apply.outputs.stdout }}
+          \`\`\`
+          EOF
