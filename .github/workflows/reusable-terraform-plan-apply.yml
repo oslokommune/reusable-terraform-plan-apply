@@ -116,10 +116,6 @@ jobs:
         uses: oslokommune/composite-actions/disallow-same-approver@disallow-same-approver-v1
 
 
-      - name: Turnstyle
-        uses: softprops/turnstyle@807f6009e7cee5c2c9faa41ccef03a8bb24b06ab # v2.4.0
-
-
       - if: ${{ inputs.configure_aws_credentials }}
         name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
