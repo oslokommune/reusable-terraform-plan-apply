@@ -80,9 +80,6 @@ on:
 env:
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
 
-concurrency:
-  group: "${{ inputs.environment }}-${{ inputs.working_directory }}"
-
 jobs:
 
   terraform-plan:
@@ -117,6 +114,10 @@ jobs:
       - if: ${{ !inputs.allow_same_approver }}
         name: Fail if the person who initiated the deployment is the same who approved it.
         uses: oslokommune/composite-actions/disallow-same-approver@disallow-same-approver-v1
+
+
+      - name: Turnstyle
+        uses: softprops/turnstyle@807f6009e7cee5c2c9faa41ccef03a8bb24b06ab # v2.4.0
 
 
       - if: ${{ inputs.configure_aws_credentials }}
