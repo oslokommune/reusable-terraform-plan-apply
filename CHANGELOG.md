@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.4](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.3...v2.3.4) (2025-08-07)
+
+
+### Bug Fixes
+
+* disable shell interpolation in heredoc ([#103](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/103)) ([3ac11d1](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/3ac11d105f573f3b9f2b21cc02cfba1ab7ebd38f))
+
 ## [2.3.3](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.2...v2.3.3) (2024-12-18)
 
 
