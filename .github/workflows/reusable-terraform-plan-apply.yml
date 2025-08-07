@@ -194,6 +194,7 @@ jobs:
         run: |
           cat << 'EOF' > plan.md
           ## Terraform execution
+          <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
           Running Terraform in `${{ inputs.working_directory }}`.
 
@@ -214,7 +215,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: '<details><summary>Show plan</summary>'
+          body-includes: '<!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->'
 
 
       - if: github.event_name == 'pull_request'
