@@ -179,25 +179,56 @@ jobs:
       # If this step fails, make sure you have updated and commited a lock file covering all platforms:
       # terraform providers lock -platform=darwin_amd64 -platform=darwin_arm64 -platform=linux_amd64
       - name: Initialize the working directory containing Terraform configuration files
+        id: init
+        continue-on-error: true
         run: |
-          terraform init -input=false -lockfile=readonly
+          terraform init -no-color -input=false -lockfile=readonly
 
 
       - name: Create a Terraform execution plan (don't cancel this step)
         id: plan
+        if: steps.init.outcome == 'success'
+        continue-on-error: true
         run: |
-          terraform plan -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+          terraform plan -no-color -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
 
 
       - if: github.event_name == 'pull_request'
         name: Create Terraform plan summary file
+        env:
+         WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
-          cat << 'EOF' > plan.md
+          cat << 'EOF' > details.md
           ## Terraform execution
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
           Running Terraform in `${{ inputs.working_directory }}`.
 
+          **${{ steps.init.outcome == 'success' && steps.plan.outcome == 'success' && '✅ Terraform plan succeeded' || '❌ Terraform plan failed' }}**
+          EOF
+
+          if [ "${{ steps.init.outcome }}" = "failure" ]; then
+            cat << 'EOF' >> details.md
+          <details><summary>Show error</summary>
+
+          ```
+          ${{ steps.init.outputs.stderr }}
+          ```
+
+          </details>
+          EOF
+          elif [ "${{ steps.plan.outcome }}" = "failure" ]; then
+            cat << 'EOF' >> details.md
+          <details><summary>Show error</summary>
+
+          ```
+          ${{ steps.plan.outputs.stderr }}
+          ```
+
+          </details>
+          EOF
+          elif [ "${{ steps.plan.outcome }}" = "success" ]; then
+            cat << 'EOF' >> details.md
           <details><summary>Show plan</summary>
 
           ```terraform
@@ -205,6 +236,13 @@ jobs:
           ```
 
           </details>
+          EOF
+          fi
+
+          cat <<EOF >> details.md
+
+          ---
+          🔎 _[View workflow logs]($WORKFLOW_RUN_URL)_
           EOF
 
 
@@ -224,7 +262,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
-          body-path: ${{ inputs.working_directory }}/plan.md
+          body-path: ${{ inputs.working_directory }}/details.md
           edit-mode: replace
 
 
@@ -236,6 +274,12 @@ jobs:
           ${{ steps.plan.outputs.stdout }}
           ```
           EOF
+
+
+      - name: Fail job if terraform plan failed
+        if: steps.status.plan.outcome != 'success'
+        run: |
+          exit 1
 
 
       # This is the only real way to guarantee what is approved is what is applied
