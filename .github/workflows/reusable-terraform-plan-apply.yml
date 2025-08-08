@@ -277,7 +277,7 @@ jobs:
 
 
       - name: Fail job if terraform plan failed
-        if: steps.status.plan.outcome != 'success'
+        if: steps.plan.outcome != 'success'
         run: |
           exit 1
 
