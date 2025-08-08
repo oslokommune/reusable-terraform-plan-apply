@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.6](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.5...v2.3.6) (2025-08-08)
+
+
+### Bug Fixes
+
+* update PR comment on failure ([7247ca7](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/7247ca7aacc7aa53245a79f35e698272883048bc))
+
 ## [2.3.5](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.4...v2.3.5) (2025-08-07)
 
 
