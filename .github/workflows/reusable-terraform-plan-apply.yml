@@ -116,7 +116,7 @@ jobs:
 
       - name: Debug - Print GitHub event payload
         env:
-          GITHUB_PAYLOAD: ${{ toJSON(github.event) }}
+          GITHUB_PAYLOAD: ${{ toJSON(github) }}
         run: |
           echo "Event name: ${{ github.event_name }}"
 
