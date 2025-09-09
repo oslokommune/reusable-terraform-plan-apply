@@ -114,12 +114,6 @@ jobs:
 
     steps:
 
-      - name: Debug - Print GitHub event payload
-        env:
-          GITHUB_PAYLOAD: ${{ toJSON(github) }}
-        run: |
-          echo Hi
-
 
       - if: ${{ !inputs.allow_same_approver }}
         name: Fail if the person who initiated the deployment is the same who approved it.
@@ -139,6 +133,13 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ inputs.git_ref }}
+
+
+      - name: Debug - Print GitHub event payload
+        env:
+          GITHUB_PAYLOAD: ${{ toJSON(github) }}
+        run: |
+          echo Hi
 
 
       - name: Add output parameter for the checked out commit SHA and workdir short SHA
