@@ -209,7 +209,7 @@ jobs:
          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
           cat << 'EOF' > details.md
-          ## Terraform execution
+          ## Terraform plan
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
           Running Terraform in `${{ inputs.working_directory }}`.
