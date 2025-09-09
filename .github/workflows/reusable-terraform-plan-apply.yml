@@ -118,7 +118,7 @@ jobs:
         env:
           GITHUB_PAYLOAD: ${{ toJSON(github) }}
         run: |
-          echo "Event name: ${{ github.event_name }}"
+          echo Hi
 
 
       - if: ${{ !inputs.allow_same_approver }}
