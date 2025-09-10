@@ -16,6 +16,14 @@ on:
       AGE_SECRET_KEY:
         required: true
     inputs:
+      debug:
+        description: >
+          Output debug information in a debug step.
+        required: false
+        default: false
+        type: boolean
+
+
       environment:
         description: >
           The GitHub deployment environment to use.
@@ -106,6 +114,8 @@ jobs:
 
     env:
       TF_IN_AUTOMATION: true
+      ISSUE_NUMBER: ${{ (github.event_name == 'pull_request' && github.event.pull_request.number) || (github.event.action == 'plan-command' && github.event.client_payload.pull_request.number) }}
+      EVENT_IS_PR_OR_PLAN_COMMAND: ${{ github.event_name == 'pull_request' || (github.event_name == 'repository_dispatch' && github.event.action == 'plan-command') }}
 
     outputs:
       plan_filename: ${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
@@ -132,6 +142,14 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ inputs.git_ref }}
+
+
+      - if: ${{ inputs.debug }}
+        name: Debug - Print GitHub event payload
+        env:
+          GITHUB_PAYLOAD: ${{ toJSON(github) }}
+        run: |
+          echo Printing debug variables
 
 
       - name: Add output parameter for the checked out commit SHA and workdir short SHA
@@ -176,6 +194,44 @@ jobs:
           ssh-private-key: ${{ secrets.GOLDEN_PATH_IAC_PRIVATE_DEPLOY_KEY }}
 
 
+      - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
+        name: Find Terraform plan comment
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
+        id: fc
+        with:
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->'
+
+
+      - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
+        name: Create markdown for "in progress" comment
+        env:
+          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
+        run: |
+          cat << 'EOF' > details.md
+          ## Terraform plan: ⏳ In progress...
+          <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
+
+          Running Terraform in `${{ inputs.working_directory }}`...
+          EOF
+
+          cat <<EOF >> details.md
+
+          ---
+          🔎 _[View workflow logs]($WORKFLOW_RUN_URL)_
+          EOF
+
+      - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
+        name: Upsert in progress comment
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
+        with:
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          body-path: ${{ inputs.working_directory }}/details.md
+          edit-mode: replace
+
+
       # If this step fails, make sure you have updated and commited a lock file covering all platforms:
       # terraform providers lock -platform=darwin_amd64 -platform=darwin_arm64 -platform=linux_amd64
       - name: Initialize the working directory containing Terraform configuration files
@@ -193,16 +249,16 @@ jobs:
           terraform plan -no-color -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
 
 
-      - if: github.event_name == 'pull_request'
-        name: Create Terraform plan summary file
+      - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
+        name: Create markdown for Terraform plan comment
         env:
          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
           cat << 'EOF' > details.md
-          ## Terraform execution
+          ## Terraform plan
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
-          Running Terraform in `${{ inputs.working_directory }}`.
+          Ran Terraform in `${{ inputs.working_directory }}`.
 
           **${{ steps.init.outcome == 'success' && steps.plan.outcome == 'success' && '✅ Terraform plan succeeded' || '❌ Terraform plan failed' }}**
           EOF
@@ -245,22 +301,11 @@ jobs:
           🔎 _[View workflow logs]($WORKFLOW_RUN_URL)_
           EOF
 
-
-      - if: github.event_name == 'pull_request'
-        name: Find Terraform plan comment
-        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
-        id: fc
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: '<!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->'
-
-
-      - if: github.event_name == 'pull_request'
-        name: Create or update Terraform plan comment
+      - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
+        name: Upsert Terraform plan comment
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
           comment-id: ${{ steps.fc.outputs.comment-id }}
           body-path: ${{ inputs.working_directory }}/details.md
           edit-mode: replace
