@@ -204,6 +204,14 @@ jobs:
           body-includes: '<!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->'
 
 
+      - if: ${{ inputs.debug }}
+        name: Debug - plan id
+        env:
+          GITHUB_PAYLOAD: ${{ toJSON(github) }}
+        run: |
+          echo Comment id: ${{ steps.fc.outputs.comment-id }}
+
+
       - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
         name: Create markdown for "in progress" comment
         env:
@@ -223,7 +231,7 @@ jobs:
           EOF
 
       - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
-        name: Upsert in progress comment
+        name: Upsert Terraform comment
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
@@ -247,6 +255,14 @@ jobs:
         continue-on-error: true
         run: |
           terraform plan -no-color -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
+
+
+      - if: ${{ inputs.debug }}
+        name: Debug - plan id
+        env:
+          GITHUB_PAYLOAD: ${{ toJSON(github) }}
+        run: |
+          echo Comment id: ${{ steps.fc.outputs.comment-id }}
 
 
       - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
@@ -301,8 +317,9 @@ jobs:
           🔎 _[View workflow logs]($WORKFLOW_RUN_URL)_
           EOF
 
+
       - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
-        name: Upsert Terraform plan comment
+        name: Upsert Terraform comment
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
