@@ -218,7 +218,7 @@ jobs:
           WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
           BASENAME=$(basename "${{ inputs.working_directory }}")
-          TIMESTAMP=$(date +"%c")
+          TIMESTAMP=$(date +"%a %d. %b %Y, %T")
           
           cat << EOF > details.md
           ## Terraform plan: ${BASENAME} (⏳ In progress...)
@@ -268,7 +268,7 @@ jobs:
          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
           BASENAME=$(basename "${{ inputs.working_directory }}")
-          TIMESTAMP=$(date +"%c")
+          TIMESTAMP=$(date +"%a %d. %b %Y, %T")
           
           cat << EOF > details.md
           ## Terraform plan: ${BASENAME}
