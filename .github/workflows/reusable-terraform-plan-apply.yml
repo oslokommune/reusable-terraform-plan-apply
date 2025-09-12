@@ -225,7 +225,7 @@ jobs:
 
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
-          Running Terraform in \`${{ inputs.working_directory }}\` at ${TIMESTAMP}...
+          Running Terraform in \`${{ inputs.working_directory }}\`(started ${TIMESTAMP})...
           EOF
 
           cat <<EOF >> details.md
@@ -272,10 +272,9 @@ jobs:
           
           cat << EOF > details.md
           ## Terraform plan: ${BASENAME}
-          _Completed: ${TIMESTAMP}_
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
-          Ran Terraform in \`${{ inputs.working_directory }}\`.
+          Ran Terraform in \`${{ inputs.working_directory }}\` (completeted ${TIMESTAMP}).
 
           **${{ steps.init.outcome == 'success' && steps.plan.outcome == 'success' && '✅ Terraform plan succeeded' || '❌ Terraform plan failed' }}**
           EOF
