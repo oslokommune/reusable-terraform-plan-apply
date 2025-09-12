@@ -217,12 +217,15 @@ jobs:
         env:
           WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
-          cat << 'EOF' > details.md
-          ## Terraform plan: $(basename "${{ inputs.working_directory }}") (⏳ In progress...)
+          BASENAME=$(basename "${{ inputs.working_directory }}")
+          TIMESTAMP=$(date +"%c")
+          
+          cat << EOF > details.md
+          ## Terraform plan: ${BASENAME} (⏳ In progress...)
 
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
-          Running Terraform in `${{ inputs.working_directory }}` at $(date +"%c")...
+          Running Terraform in \`${{ inputs.working_directory }}\` at ${TIMESTAMP}...
           EOF
 
           cat <<EOF >> details.md
@@ -264,12 +267,15 @@ jobs:
         env:
          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
-          cat << 'EOF' > details.md
-          ## Terraform plan: $(basename "${{ inputs.working_directory }}")
-          _Completed: $(date +"%c")_
+          BASENAME=$(basename "${{ inputs.working_directory }}")
+          TIMESTAMP=$(date +"%c")
+          
+          cat << EOF > details.md
+          ## Terraform plan: ${BASENAME}
+          _Completed: ${TIMESTAMP}_
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
-          Ran Terraform in `${{ inputs.working_directory }}`.
+          Ran Terraform in \`${{ inputs.working_directory }}\`.
 
           **${{ steps.init.outcome == 'success' && steps.plan.outcome == 'success' && '✅ Terraform plan succeeded' || '❌ Terraform plan failed' }}**
           EOF
