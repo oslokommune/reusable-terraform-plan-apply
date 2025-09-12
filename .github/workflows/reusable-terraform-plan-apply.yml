@@ -219,9 +219,10 @@ jobs:
         run: |
           cat << 'EOF' > details.md
           ## Terraform plan: $(basename "${{ inputs.working_directory }}") (⏳ In progress...)
+
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
-          Running Terraform in `${{ inputs.working_directory }}`...
+          Running Terraform in `${{ inputs.working_directory }}` at $(date +"%c")...
           EOF
 
           cat <<EOF >> details.md
@@ -265,6 +266,7 @@ jobs:
         run: |
           cat << 'EOF' > details.md
           ## Terraform plan: $(basename "${{ inputs.working_directory }}")
+          _Completed: $(date +"%c")_
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
           Ran Terraform in `${{ inputs.working_directory }}`.
