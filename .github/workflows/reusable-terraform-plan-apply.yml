@@ -218,7 +218,7 @@ jobs:
           WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
           cat << 'EOF' > details.md
-          ## Terraform plan: ⏳ In progress...
+          ## Terraform plan: $(basename "${{ inputs.working_directory }}") (⏳ In progress...)
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
           Running Terraform in `${{ inputs.working_directory }}`...
@@ -264,7 +264,7 @@ jobs:
          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
         run: |
           cat << 'EOF' > details.md
-          ## Terraform plan
+          ## Terraform plan: $(basename "${{ inputs.working_directory }}")
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
           Ran Terraform in `${{ inputs.working_directory }}`.
