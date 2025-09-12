@@ -232,6 +232,7 @@ jobs:
 
       - if: env.EVENT_IS_PR_OR_PLAN_COMMAND
         name: 'Upsert comment for "In progress"'
+        id: upsert-in-progress-comment
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
@@ -325,7 +326,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
         with:
           issue-number: ${{ env.ISSUE_NUMBER }}
-          comment-id: ${{ steps.fc.outputs.comment-id }}
+          comment-id: ${{ steps.upsert-in-progress-comment.outputs.comment-id }}
           body-path: ${{ inputs.working_directory }}/details.md
           edit-mode: replace
 
