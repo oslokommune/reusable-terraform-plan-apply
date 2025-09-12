@@ -225,7 +225,7 @@ jobs:
 
           <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
 
-          Running Terraform in \`${{ inputs.working_directory }}\`(started ${TIMESTAMP})...
+          Running Terraform in \`${{ inputs.working_directory }}\` (started ${TIMESTAMP})...
           EOF
 
           cat <<EOF >> details.md
