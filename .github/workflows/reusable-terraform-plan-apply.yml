@@ -87,6 +87,7 @@ on:
 
 env:
   TF_PLUGIN_CACHE_DIR: ${{ github.workspace }}/.terraform.d/plugin-cache
+  TZ: 'Europe/Oslo'
 
 concurrency:
   group: "${{ inputs.environment }}-${{ inputs.working_directory }}"
