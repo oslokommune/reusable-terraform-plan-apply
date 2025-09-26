@@ -145,8 +145,8 @@ jobs:
           ref: ${{ inputs.git_ref }}
 
 
-      - if: ${{ inputs.debug }}
-        name: Debug - Print GitHub event payload
+      #- if: ${{ inputs.debug }}
+      - name: Debug - Print GitHub event payload
         env:
           GITHUB_PAYLOAD: ${{ toJSON(github) }}
         run: |
@@ -195,7 +195,7 @@ jobs:
           ssh-private-key: ${{ secrets.GOLDEN_PATH_IAC_PRIVATE_DEPLOY_KEY }}
 
 
-      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND }}
+      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND == 'true' }}
         name: Find Terraform plan comment
         uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
         id: fc
@@ -213,7 +213,7 @@ jobs:
           echo Comment id: ${{ steps.fc.outputs.comment-id }}
 
 
-      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND }}
+      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND == 'true' }}
         name: Create markdown for "in progress" comment
         env:
           WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
@@ -235,7 +235,7 @@ jobs:
           🔎 _[View workflow logs]($WORKFLOW_RUN_URL)_
           EOF
 
-      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND }}
+      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND == 'true' }}
         name: 'Upsert comment for "In progress"'
         id: upsert-in-progress-comment
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
@@ -263,7 +263,7 @@ jobs:
           terraform plan -no-color -input=false -no-color -detailed-exitcode -out=${{ steps.output-plan-filename.outputs.PLAN_FILENAME }}
 
 
-      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND }}
+      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND == 'true' }}
         name: Create markdown for Terraform plan comment
         env:
          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
@@ -329,7 +329,7 @@ jobs:
           echo Comment id: ${{ steps.fc.outputs.comment-id }}
 
 
-      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND }}
+      - if: ${{ env.EVENT_IS_PR_OR_PLAN_COMMAND == 'true' }}
         name: 'Upsert comment for "Plan"'
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4.0.0
         with:
