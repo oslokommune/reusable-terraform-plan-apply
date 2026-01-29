@@ -1,0 +1,9 @@
+{
+  "name": "github-actions-terraform-plan-apply",
+  "description": "Reusable GitHub Actions workflow for Terraform plan and apply operations. Used together with iac-platform skill for CI/CD pipelines",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kjøremiljø"
+  },
+  "keywords": ["github-actions", "terraform", "iac", "aws", "ci-cd"]
+}
