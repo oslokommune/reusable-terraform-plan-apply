@@ -1,5 +1,9 @@
 # reusable-terraform-plan-apply
 
+> [!WARNING]
+> **This repository is deprecated and will not receive further development.**
+> Please use the new [reusable-terraform-*](https://github.com/oslokommune/?q=reusable-terraform&type=repositories) GitHub Actions workflows instead.
+
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 
 This repository contains a [reusable workflow for running Terraform](https://docs.github.com/en/actions/using-workflows/reusing-workflows):
