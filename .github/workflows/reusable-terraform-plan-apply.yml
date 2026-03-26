@@ -116,6 +116,8 @@ jobs:
 
 
       - name: Deprecation warning
+        # Need to set working-directory for this step since we are overriding the default working-directory with
+        # inputs.working-directory. Without a valid directory this step will fail before running echo.
         working-directory: ${{ github.workspace }}
         run: |
           echo "::warning::This reusable workflow (reusable-terraform-plan-apply) is deprecated and will not receive further development. Please migrate to the new reusable-terraform-apply workflow: https://github.com/oslokommune/reusable-terraform-apply"
