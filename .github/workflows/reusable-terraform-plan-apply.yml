@@ -116,6 +116,7 @@ jobs:
 
 
       - name: Deprecation warning
+        working-directory: ${{ github.workspace }}
         run: |
           echo "::warning::This reusable workflow (reusable-terraform-plan-apply) is deprecated and will not receive further development. Please migrate to the new reusable-terraform-apply workflow: https://github.com/oslokommune/reusable-terraform-apply"
 
