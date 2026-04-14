@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.7...v2.4.0) (2026-04-14)
+
+
+### Features
+
+* add deprecation notice to workflow ([#116](https://github.com/oslokommune/reusable-terraform-plan-apply/issues/116)) ([a0c0fc9](https://github.com/oslokommune/reusable-terraform-plan-apply/commit/a0c0fc98dfb347c68896ddce3c14aed0af41d8c6))
+
 ## [2.3.7](https://github.com/oslokommune/reusable-terraform-plan-apply/compare/v2.3.6...v2.3.7) (2025-08-08)
 
 
