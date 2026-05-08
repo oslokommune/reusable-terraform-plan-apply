@@ -125,7 +125,7 @@ jobs:
 
       - if: ${{ !inputs.allow_same_approver }}
         name: Fail if the person who initiated the deployment is the same who approved it.
-        uses: oslokommune/composite-actions/disallow-same-approver@disallow-same-approver-v1
+        uses: oslokommune/composite-actions/disallow-same-approver@56994cdf06b90f10f879159c484b7f044ceb4648 # disallow-same-approver-v1.5.1
 
 
       - if: ${{ inputs.configure_aws_credentials }}
@@ -302,7 +302,7 @@ jobs:
 
       - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
         name: Disable unnecessary apt features to optimize installation performance
-        uses: oslokommune/composite-actions/optimize-apt-get@optimize-apt-get-v1
+        uses: oslokommune/composite-actions/optimize-apt-get@a29ccab6ed5d447c57e716349574258d46154e71 # optimize-apt-get-v1.3.0
 
 
       - if: ${{ inputs.apply && steps.plan.outputs.exitcode == 2 }}
@@ -365,7 +365,7 @@ jobs:
 
 
       - name: Disable unnecessary apt features to optimize installation performance
-        uses: oslokommune/composite-actions/optimize-apt-get@optimize-apt-get-v1
+        uses: oslokommune/composite-actions/optimize-apt-get@a29ccab6ed5d447c57e716349574258d46154e71 # optimize-apt-get-v1.3.0
 
 
       - name: Install the age encryption tool
