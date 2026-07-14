@@ -145,9 +145,11 @@ jobs:
 
       - name: Add output parameter for the checked out commit SHA and workdir short SHA
         id: output-hashes
+        env:
+          WORKING_DIRECTORY: ${{ inputs.working_directory }}
         run: |
           echo "CHECKOUT_SHA=$(git log -1 '--format=format:%H')" >> "$GITHUB_OUTPUT"
-          echo "WORKDIR_SHORT_SHA=$(echo -n ${{ inputs.working_directory }} | sha1sum | cut -c 1-7)" >> "$GITHUB_OUTPUT"
+          echo "WORKDIR_SHORT_SHA=$(echo -n "$WORKING_DIRECTORY" | sha1sum | cut -c 1-7)" >> "$GITHUB_OUTPUT"
 
 
       - name: Add output parameter for the Terraform execution plan filename
@@ -206,12 +208,13 @@ jobs:
         name: Create Terraform plan summary file
         env:
          WORKFLOW_RUN_URL: ${{ github.server_url}}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
+         WORKING_DIRECTORY: ${{ inputs.working_directory }}
         run: |
-          cat << 'EOF' > details.md
+          cat << EOF > details.md
           ## Terraform execution
-          <!--reusable-terraform-plan-apply:${{inputs.working_directory}}-->
+          <!--reusable-terraform-plan-apply:${WORKING_DIRECTORY}-->
 
-          Running Terraform in `${{ inputs.working_directory }}`.
+          Running Terraform in \`${WORKING_DIRECTORY}\`.
 
           **${{ steps.init.outcome == 'success' && steps.plan.outcome == 'success' && '✅ Terraform plan succeeded' || '❌ Terraform plan failed' }}**
           EOF
@@ -380,9 +383,11 @@ jobs:
 
 
       - name: Extract the TAR file
+        env:
+          WORKING_DIRECTORY: ${{ inputs.working_directory }}
         run: |
-          mkdir -p "./${{ inputs.working_directory }}"
-          tar -xf working_directory.tar --directory "./${{ inputs.working_directory }}"
+          mkdir -p "./${WORKING_DIRECTORY}"
+          tar -xf working_directory.tar --directory "./${WORKING_DIRECTORY}"
           rm working_directory.tar
 
 
